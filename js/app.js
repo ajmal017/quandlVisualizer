@@ -1,9 +1,9 @@
 'use strict';
 
 // GLOBALS
-var stockData;
-var colNames;
-var dataObj;
+var stockData; // array of stock data
+var colNames; // titles of columns
+var dataObj; // main object rtrnd frm API call
 var pageLoad;
 var ticker;
 
@@ -46,9 +46,16 @@ var clear = function() {
 	$('#dataInfo').empty();
 	$('#vTable').empty();
 	$('#vTable').append('<thead id="colNames"></thead>');
+
+	$('#relStatsName').empty();
 }
 
+
+
 var populate = function (theUrl){
+	// google.charts.load('current', {'packages':['corechart']});
+	// google.charts.setOnLoadCallback(drawChart);
+
 	$.ajax({
 		type: 'GET',
 		url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + theUrl + '.json?api_key=rh1C19BLzxoz3PZs7HB6',
@@ -58,8 +65,6 @@ var populate = function (theUrl){
 			
 			pageLoad = true;
 			
-			
-
 			// GLOBALS
 			dataObj = data.dataset;
 			stockData = data.dataset.data;
@@ -84,7 +89,49 @@ var populate = function (theUrl){
 					}
 				}
 			}
+
+			$('#relStatsName').append('Relevant Stats About ' + dataObj.name.substring(0, dataObj.name.length - 52));
+			// google.charts.load('current', {'packages':['corechart']});
+			// google.charts.setOnLoadCallback(drawChart);
 		}
 	});
+	
 }
+
+var MAKECHART = function(table){
+
+   // Load relevant packages
+   google.charts.load('current', {'packages':['corechart']});
+   google.charts.setOnLoadCallback(drawChart);
+
+   // Globals
+   var stockDataArr = table;
+   console.log(stockDataArr);
+
+
+   function drawChart() {
+      var data = google.visualization.arrayToDataTable(
+         [
+            ['Year', 'Sales', 'Expenses'],
+            ['2004',  1000,      400],
+            ['2005',  1170,      460],
+            ['2006',  660,       1120],
+            ['2007',  1030,      540]
+         ]
+      );
+
+      var options = {
+         title: '',
+         curveType: 'function',
+         legend: { position: 'bottom' }
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+      chart.draw(data, options);
+   }
+
+}
+
+MAKECHART();
 
